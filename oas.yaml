@@ -1,3 +1,10 @@
+openapi: 3.0.3
+
+info:
+  title: Orders API
+  description: API to process payments for orders
+  version: 1.0.0
+
 servers:
   - url: http://localhost:3000
   - description: URL for local dev and test
