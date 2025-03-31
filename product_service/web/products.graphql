@@ -1,0 +1,145 @@
+scalar Datetime
+
+enum MeasureUnit {
+    LITERS
+    KILOGRAMS
+    UNITS
+}
+
+type IngredientRecipe {
+    ingredient: Ingredient!
+    quantity: Float!
+    unit: MeasureUnit!
+}
+
+interface ProductInterface {
+    id: ID!
+    name: String!
+    price: Float
+    ingredients: [IngredientRecipe!]
+    available: Boolean!
+    lastUpdated: Datetime!
+}
+
+type Cake implements ProductInterface{
+    id: ID!
+    name: String!
+    price: Float
+    available: Boolean!
+    hasFilling: Boolean!
+    hasNutsToppingOption: Boolean!
+    lastUpdated: Datetime!
+    ingredients: [IngredientRecipe!]!
+}
+
+type Beverage implements ProductInterface {
+    id: ID!
+    name: String!
+    price: Float
+    available: Boolean!
+    hasCreamOnTopOption: Boolean!
+    hasServeOnIceOption: Boolean!
+    lastUpdated: Datetime!
+    ingredients: [IngredientRecipe!]!
+}
+
+union Product = Beverage | Cake
+
+type Stock {
+    quantity: Float!
+    unit: MeasureUnit!
+}
+
+type Ingredient {
+    id: ID!
+    name: String!
+    stock: Stock
+    products: [Product!]!
+    supplier: Supplier!
+    description: [String!]
+    lastUpdated: Datetime!
+}
+
+type Supplier {
+    id: ID!
+    name: String!
+    address: String!
+    contactNumber: String!
+    email: String!
+    ingredients: [Ingredient!]!
+}
+
+enum SortingOrder {
+    ASCENDING
+    DESCENDING
+}
+
+input ProductFilter {
+    maxPrice: Float
+    minPrice: Float
+    available: Boolean = true
+    sort: SortingOrder = DESCENDING
+    resultPerPage: Int = 10
+    page: Int = 1
+}
+
+type Query {
+    allProducts: [Product!]!
+    allIngredients: [Ingredient!]!
+    products(input: ProductFilter): [Product!]!
+    product(id: ID!): Product
+    ingredient(id: ID!): Ingredient
+}
+
+enum ProductType {
+    cake
+    beverage
+}
+
+enum Sizes {
+    SMALL
+    MEDIUM
+    BIG
+}
+
+input IngredientRecipeInput {
+    ingredient: ID!
+    quantity: Float!
+    unit: MeasureUnit!
+}
+
+input AddProductInput {
+    price: String
+    size: Sizes
+    ingredients: [IngredientRecipeInput!]!
+    hasFilling: Boolean = false
+    hasNutsToppingOption: Boolean = false
+    hasCreamOnTopOption: Boolean = false
+    hasServeOnIceOption: Boolean = false
+}
+
+input AddSupplier {
+    address: String!
+    contactNumber: String!
+    email: String!
+}
+
+input AddIngredient {
+    supplier: AddSupplier,
+    stock: AddStock,
+    description: [String!]!
+}
+
+input AddStock {
+    quantity: Float!
+    unit: MeasureUnit!
+}
+
+type Mutation {
+    addSupplier(name: String!, input: AddSupplier!): Supplier!
+    addIngredient(name: String!, input: AddIngredient!): Ingredient!
+    addProduct(name: String!, type: ProductType!, input: AddProductInput!): Product!
+    updateProduct(id: ID!, input: AddProductInput!): Product!
+    deleteProduct(id: ID!): Boolean!
+    updateStock(id: ID!, changeAmount: AddStock): Ingredient!
+}
