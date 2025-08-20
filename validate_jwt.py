@@ -1,0 +1,10 @@
+from cryptography.x509 import load_pem_x509_certificate
+from pathlib import Path
+import jwt
+
+public_key_text = Path('public_key.pem').read_text()
+public_key = load_pem_x509_certificate(public_key_text.encode('utf-8')).public_key()
+
+access_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGgucGF5bWVudC1zZXJ2aWNlLmlvLyIsInN1YiI6IjczYmYzMDg4LTBkMjEtNGZhZi04NDkxLWY1NzZkN2JiYjc1OCIsImF1ZCI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vcmRlcnMiLCJpYXQiOjE3NTU2NjI3NzguMjIzNjE5LCJleHAiOjE3NTU3NDkxNzguMjIzNjE5LCJzY29wZSI6Im9wZW5pZCJ9.IUwsqOhLsiYA0sM8T8xX3rIECJsx6VYEMNmuq0_J6wQKNeUIdUBmB5weIzAEZgBc6rrsZwzITtHEuvLJRIvxFUAC9-QKSUopVdGafzikL6feiB_1YtzzYYxR2FhiA6uvHvRsS8OWUz1qUYJkW7UDKhxwIw2QS-8LMJ6STDPQOYaZ-WY6Nfd3_xRaq9uladrL4Bdyddmtdr-2WpfmCo9uGSTEUyvFvsPr6sNvrWBlNTAs_ZPV1SmpqkvF7qugUGYe_P_ggwMzZlNmVdFLh5ioqctXefboDVb7Q2G1L_G1ATayZoRzYnEahdbBxqnqjGytbTQgynzwp4gi5mYcdxX2ow'
+
+print(jwt.decode(access_token, key=public_key, algorithms=['RS256'], audience=["http://127.0.0.1:8000/orders"]))
